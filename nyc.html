@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+			textarea{
+				font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				border-radius: 10px;
+				border: none;
+			}
+			h1{
+				font-family: Impact;
+				padding: 50px 0 50px 0;
+			}
+			#head{
+				background: #111;
+				border-color: #111;
+				float: left;
+				margin: 0 0 30px 0;
+				padding: 5px 5px 10px 5px;
+				width: 100%;
+				text-align: center;
+				font-family: monospace;
+				font-size: 40px;
+			}
+			nav ul{
+				list-style: none;
+				padding-bottom: 3%;
+			}
+			#categories{
+				float: left;
+				margin-left: 30%;
+			}
+			li img{
+				width: 180px;
+				height: 130px;
+                		border-style: outset;
+                		border: 10px;
+			}
+            	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			#full_time_part_time_indicator{
+				font-family: monospace;
+				font-size: 20px;
+				padding: 10px 5px 10px 5px;
+			}
+			#job_category{
+				font-family: monospace;
+				font-size: 20px;
+				padding: 10px 5px 10px 5px;
+			}
+			button{
+				font-family: monospace;
+				font-size: 20px;
+				padding: 10px 5px 10px 5px;
+			}
+            button:hover{
+				background-color: #D3D3D3;
+			}
+			#card{
+				width:300px;
+				padding:10px;
+				margin:10px;
+				display:inline-block;
+				border-color: #D3D3D3;
+				border-radius: 0px;
+				
+			}
+			h2{
+				font-family:"Arial";
+				font-size: 15px;
+				text-shadow:gray 2px 2px 2px;
+			}
+			p,a{
+				font-size:8pt;
+				font-family:"Arial";
+			}
+			.dropdown-item:hover{
+				background-color: #808080;
+			}
+			#dropdown-content{
+				max-height:250px;
+				overflow:auto;
+			}
+			#output{
+				background-color: #fff;
+			}
+			li{
+				float: left;
+				max-width: 180px;
+				list-style: none;
+				padding-left: 8%;
+				padding-right: 10%;
+			}
+		</style>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+				
+		<script type="text/template" id="cardTemplate">
+				<div id = "card">
+					<h2> {{civil_service_title}} </h2>
+					<p> {{posting_data}} <hr>
+					<p> {{job_category}} </p><hr>
+					<textarea rows="6" cols="25" readonly class="h6"> {{job_description}} </textarea>
+				</div>
+		</script>
+		
+		<script>	
+			var data;
+			function loadJSON(){				
+				$.getJSON("https://data.cityofnewyork.us/resource/swhp-yxa4.json",function(results){
+					data=results;
+				})
+				
+			}
+			
+			function search(){
+				var build = "";
+				var time = document.getElementById("full_time_part_time_indicator");
+				var jDescrip = document.getElementById("jDescrip");
+				var card = document.getElementById("card");
+				var job_category = document.getElementById("job_category");
+				var output = document.getElementById("output");
+				var cardTemplate = document.getElementById("cardTemplate").innerHTML;
+				for(var index = 0; index < data.length; index++){
+					//if(data[index].incident_zip == zip.value && data[index].agency_name == agency.value){
+					if(data[index].job_category.indexOf(job_category.value) == -1 && data[index].full_time_part_time_indicator.toUpperCase().indexOf(time.value.toUpperCase() == -1)){
+						build += Mustache.render(cardTemplate, data[index]);
+						}
+				
+                }
+			output.innerHTML = build;	
+            }
+			
+			function jcategories(){
+				var build2 = "";
+				var ddown = document.getElementById("dropdown-content");
+				for(var index = 0; index < data.length; index++){
+					build2 += '<li><a class="dropdown-item" href="#">' + data[index].job_category + "</a></li>";
+				}
+				ddown.innerHTML = build2;
+			}
+			
+		</script>
+	</head>
+	<body onload="loadJSON()">
+		<div id="head">
+			<h1 class="display-1 text-white">NEW YORK CITY JOBS</h1>
+			<input type="text" id="job_category" placeholder="Enter Job Category">
+			<input type="text" id="full_time_part_time_indicator" placeholder="Full or Part Time">
+			<button onclick="search()">Search</button>
+		</head>
+		<nav>
+        	<ul>
+             <li id="categories">
+				<div class="dropdown">
+					<div class="btn-group">
+					  <button onclick="jcategories()" type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Job Categories
+					  </button>
+					  <ul id="dropdown-content" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+						
+					  </ul>
+					</div>
+			  </li>
+            </ul>
+		<ul>
+			<li>
+            			<img src="brooklyn.jpg">
+                	</li>
+			<li>
+				<img src="queens.jpg">
+			</li>
+			<li>
+				<img src="bronx.jpg">
+			</li>
+			<li>
+				<img src="manhattan.jpg">
+			</li>
+			<li>
+				<img src="statenIsland.jpg">
+			</li>
+		</ul>
+		</nav>
+
+		<div id="output"></div>
+	<!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	</body>
+</html>
